@@ -28,7 +28,7 @@ def main():
               'DATABASE': os.getenv('DATABASE_CLICKHOUSE')}
 
     # Создаем экземпляр класса
-    update_datamart = Update_table(dct_pg, dct_ch)
+    update_datamart = Update_table(dct_pg, dct_ch, dict_name_table['file_name'])
 
     # Если присутствует нужный файл, то обновляем справочники
     if os.path.isfile(dict_name_table['file_update_ref']):

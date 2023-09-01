@@ -11,7 +11,7 @@ class Update_table:
     """
     Класс для обновления региональных ветрин данных
     """
-    def __init__(self, dct_cfg_pg: dict, dct_cfg_ch: dict):
+    def __init__(self, dct_cfg_pg: dict, dct_cfg_ch: dict, file_name_fh8: str):
         """
         :param dct_cfg_pg: словарь с параметрами подключения к базе данных Postgre
         :param dct_cfg_ch: словарь с параметрами подключения к базе данных Clickhouse
@@ -37,6 +37,7 @@ class Update_table:
                                                                 password=dct_cfg_ch['PASSWORD'],
                                                                 database=dct_cfg_ch['DATABASE'])
         self.cursor = self.psycopg_connect.cursor()
+        self.file_name_fh8 = file_name_fh8.split('_')[-2]
 
     def __create_table_by_postgre(self, script: str) -> DataFrame:
         """
@@ -45,8 +46,7 @@ class Update_table:
         """
         return pd.read_sql(script, con=self.psycopg_connect)
 
-    @staticmethod
-    def creation_beetween_period(x: int, y: str) -> str:
+    def creation_beetween_period(self, x: int, y: str) -> str:
         """
         :param x: Год определенной записи
         :param y: Маркер, к какому типу относится запись Годовые/Сопоставимые
@@ -55,7 +55,7 @@ class Update_table:
         if y == 'Годовые':
             return str(x) + '-12-01'
         else:
-            return date.today().strftime("%Y-%m-%d")
+            return str(x) + self.file_name_fh8
 
     def update_from_file(self, file_name: str, shema_name: str, table_name: str):
         """
